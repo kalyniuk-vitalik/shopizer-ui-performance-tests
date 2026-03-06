@@ -1,0 +1,7 @@
+results.csv
+results-*.csv
+*.log
+report/
+html-report-*/
+apache-jmeter*/
+.DS_Store
