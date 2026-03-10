@@ -51,19 +51,26 @@ jobs:
 
       - name: Install JMeter plugins
         run: |
+          # Download Plugins Manager
           wget -q https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.6/jmeter-plugins-manager-1.6.jar \
             -O apache-jmeter-5.5/lib/ext/jmeter-plugins-manager-1.6.jar
+
+          # Download cmdrunner (required by PluginsManagerCMD)
           wget -q https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.2/cmdrunner-2.2.jar \
             -O apache-jmeter-5.5/lib/cmdrunner-2.2.jar
+
+          # Install PluginsManagerCMD script
           java -cp apache-jmeter-5.5/lib/ext/jmeter-plugins-manager-1.6.jar \
             org.jmeterplugins.repository.PluginManagerCMDInstaller
+
+          # Install jpgc plugins via PluginsManager (jpgc-prmctl = SetVariablesAction, jpgc-csl = ConsoleStatusLogger)
           apache-jmeter-5.5/bin/PluginsManagerCMD.sh install \
-            jpgc-synthesis,jpgc-graphs-vs,jpgc-tst,jpgc-dummy,jpgc-prmctl
-          wget -q https://repo1.maven.org/maven2/com/blazemeter/jmeter-plugins-wsc/0.3/jmeter-plugins-wsc-0.3.jar \
-            -O apache-jmeter-5.5/lib/ext/jmeter-plugins-wsc-0.3.jar
+            jpgc-synthesis,jpgc-graphs-vs,jpgc-tst,jpgc-dummy,jpgc-prmctl,jpgc-csl
+
+          # Install WeightedSwitchController jar directly from repo lib/ folder
+          cp lib/jmeter-plugins-wsc-0.7.jar apache-jmeter-5.5/lib/ext/jmeter-plugins-wsc-0.7.jar
 
       - name: Set test parameters
-        id: params
         run: |
           echo "USERS=${{ github.event.inputs.users || '1' }}" >> $GITHUB_ENV
           echo "RAMPUP=${{ github.event.inputs.rampup || '60' }}" >> $GITHUB_ENV
