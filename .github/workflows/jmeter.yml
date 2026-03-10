@@ -58,7 +58,9 @@ jobs:
           java -cp apache-jmeter-5.5/lib/ext/jmeter-plugins-manager-1.6.jar \
             org.jmeterplugins.repository.PluginManagerCMDInstaller
           apache-jmeter-5.5/bin/PluginsManagerCMD.sh install \
-            jpgc-synthesis,jpgc-graphs-vs,jpgc-tst,jpgc-dummy,jpgc-prmctl,bzm-wsc
+            jpgc-synthesis,jpgc-graphs-vs,jpgc-tst,jpgc-dummy,jpgc-prmctl
+          wget -q https://repo1.maven.org/maven2/com/blazemeter/jmeter-plugins-wsc/0.3/jmeter-plugins-wsc-0.3.jar \
+            -O apache-jmeter-5.5/lib/ext/jmeter-plugins-wsc-0.3.jar
 
       - name: Set test parameters
         id: params
