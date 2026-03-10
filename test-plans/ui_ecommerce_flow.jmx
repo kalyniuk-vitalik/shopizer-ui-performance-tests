@@ -65,7 +65,7 @@
           </elementProp>
           <elementProp name="USERS" elementType="Argument">
             <stringProp name="Argument.name">USERS</stringProp>
-            <stringProp name="Argument.value">${__P(USERS,10)}</stringProp>
+            <stringProp name="Argument.value">${__P(USERS,1)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="RAMPUP" elementType="Argument">
@@ -94,6 +94,12 @@
             <stringProp name="Argument.value">${__P(USERS_CREATION_COUNT, 6)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Number of user credentials to generate during the setup phase (active only if CREATE_USERS is TRUE)</stringProp>
+          </elementProp>
+          <elementProp name="INFLUX_DB" elementType="Argument">
+            <stringProp name="Argument.name">INFLUX_DB</stringProp>
+            <stringProp name="Argument.value">${__P(INFLUX_DB,http://localhost:8086/write?db=jmeter_shopizer)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">InfluxDB write endpoint. Default -&gt; local Influx (localhost). Override in CI with -JINFLUX_DB=http://&lt;VM_IP&gt;:8086/write?db=jmeter_shopizer to send metrics to VM (Grafana)</stringProp>
           </elementProp>
         </collectionProp>
       </Arguments>
@@ -2552,12 +2558,12 @@ manager.add(cookie);</stringProp>
         <com.blazemeter.jmeter.control.WeightedSwitchController guiclass="com.blazemeter.jmeter.control.WeightedSwitchControllerGui" testclass="com.blazemeter.jmeter.control.WeightedSwitchController" testname="Update/Remove controller" enabled="true">
           <boolProp name="IsRandomChoice">true</boolProp>
           <collectionProp name="Weights">
-            <collectionProp name="1785098585">
+            <collectionProp name="-1140251259">
               <stringProp name="1315818767">Remove item</stringProp>
               <stringProp name="1603">25</stringProp>
               <stringProp name="3569038">true</stringProp>
             </collectionProp>
-            <collectionProp name="-906339271">
+            <collectionProp name="-1869407439">
               <stringProp name="1035923434">Update item</stringProp>
               <stringProp name="1758">75</stringProp>
               <stringProp name="3569038">true</stringProp>
@@ -7019,6 +7025,59 @@ vars.put(&quot;UPDATE_CART_ITEM&quot;,update_item_payload.join(&quot;,&quot;))</
         <kg.apc.jmeter.reporters.ConsoleStatusLogger guiclass="kg.apc.jmeter.reporters.ConsoleStatusLoggerGui" testclass="kg.apc.jmeter.reporters.ConsoleStatusLogger" testname="jp@gc - Console Status Logger" enabled="false"/>
         <hashTree/>
       </hashTree>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="influxdbUrl" elementType="Argument">
+              <stringProp name="Argument.name">influxdbUrl</stringProp>
+              <stringProp name="Argument.value">${INFLUX_DB}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="application" elementType="Argument">
+              <stringProp name="Argument.name">application</stringProp>
+              <stringProp name="Argument.value">${__TestPlanName}@${__time(yyyy-MM-dd&apos;T&apos;hh:mm:ss,)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="measurement" elementType="Argument">
+              <stringProp name="Argument.name">measurement</stringProp>
+              <stringProp name="Argument.value">jmeter</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersRegex" elementType="Argument">
+              <stringProp name="Argument.name">samplersRegex</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">50;99;95;90</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="testTitle" elementType="Argument">
+              <stringProp name="Argument.name">testTitle</stringProp>
+              <stringProp name="Argument.value">${__P(TEST_TITLE,local_test_run)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="eventTags" elementType="Argument">
+              <stringProp name="Argument.name">eventTags</stringProp>
+              <stringProp name="Argument.value">USERS=${USERS},RAMPUP=${RAMPUP},DURATION=${DURATION</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
@@ -7096,7 +7155,7 @@ vars.put(&quot;UPDATE_CART_ITEM&quot;,update_item_payload.join(&quot;,&quot;))</
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ProxyControl guiclass="ProxyControlGui" testclass="ProxyControl" testname="HTTP(S) Test Script Recorder" enabled="true">
+      <ProxyControl guiclass="ProxyControlGui" testclass="ProxyControl" testname="HTTP(S) Test Script Recorder" enabled="false">
         <stringProp name="ProxyControlGui.port">8888</stringProp>
         <collectionProp name="ProxyControlGui.exclude_list">
           <stringProp name="-2063843150">(?i).*\.(bmp|css|js|gif|ico|jpe?g|png|swf|woff|woff2)</stringProp>
@@ -7123,7 +7182,7 @@ vars.put(&quot;UPDATE_CART_ITEM&quot;,update_item_payload.join(&quot;,&quot;))</
         <stringProp name="ProxyControlGui.content_type_exclude"></stringProp>
       </ProxyControl>
       <hashTree>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -7163,7 +7222,7 @@ vars.put(&quot;UPDATE_CART_ITEM&quot;,update_item_payload.join(&quot;,&quot;))</
       </hashTree>
       <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="Test Fragment" enabled="false"/>
       <hashTree>
-        <RecordingController guiclass="RecordController" testclass="RecordingController" testname="Recording Controller" enabled="true"/>
+        <RecordingController guiclass="RecordController" testclass="RecordingController" testname="Recording Controller" enabled="false"/>
         <hashTree/>
       </hashTree>
       <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="Think times" enabled="true"/>
