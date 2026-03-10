@@ -25,6 +25,10 @@ on:
         description: 'Number of user credentials to generate during setup'
         required: false
         default: '6'
+      create_users:
+        description: 'Create new users in setUp Thread Group (TRUE/FALSE)'
+        required: false
+        default: 'FALSE'
       test_title:
         description: 'Test title/description'
         required: false
@@ -77,6 +81,7 @@ jobs:
           echo "DURATION=${{ github.event.inputs.duration || '120' }}" >> $GITHUB_ENV
           echo "PRODUCTS_TO_ADD_COUNT=${{ github.event.inputs.products_to_add_count || '2' }}" >> $GITHUB_ENV
           echo "USERS_CREATION_COUNT=${{ github.event.inputs.users_creation_count || '6' }}" >> $GITHUB_ENV
+          echo "CREATE_USERS=${{ github.event.inputs.create_users || 'TRUE' }}" >> $GITHUB_ENV
           echo "TEST_TITLE=${{ github.event.inputs.test_title || 'GHA - UI Ecommerce Flow' }}" >> $GITHUB_ENV
 
       - name: Run JMeter UI Ecommerce Flow
@@ -91,7 +96,7 @@ jobs:
             -JDURATION=${{ env.DURATION }} \
             -JLOOPS=-1 \
             -JPRODUCTS_TO_ADD_COUNT=${{ env.PRODUCTS_TO_ADD_COUNT }} \
-            -JCREATE_USERS=TRUE \
+            -JCREATE_USERS=${{ env.CREATE_USERS }} \
             -JUSERS_CREATION_COUNT=${{ env.USERS_CREATION_COUNT }} \
             -JTEST_TITLE="${{ env.TEST_TITLE }}" \
             -Jbackend_metrics_window_mode=timed \
